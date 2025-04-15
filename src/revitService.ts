@@ -1,4 +1,4 @@
-import { RevitModelInfo, RevitElement, GetElementsArgs } from './types.js';
+import { RevitModelInfo, RevitElement, GetElementsArgs,GetElementInfoArgs } from './types.js';
 import { RevitSocketClient } from './revitSocketClient.js';
 import dotenv from 'dotenv';
 
@@ -62,6 +62,15 @@ export class RevitService {
     }
   }
 
+  async getElementInfo(args: GetElementInfoArgs): Promise<any> {
+    try {
+      return await this.client.getElementInfo(args);
+    } catch (error) {
+      console.error('[RevitService] 获取元素信息失败:', error);
+      throw error;
+    }
+  }
+
   
 
   /**
@@ -94,6 +103,30 @@ export class RevitService {
     } catch (error) {
       console.error('[RevitService] 获取视图失败:', error);
       throw error; // 不使用模拟数据，直接抛出错误
+    }
+  }
+
+  /**
+   * 获取所有类别
+   */
+  async getCategories(): Promise<any[]> {
+    try {
+      return await this.client.getCategories();
+    } catch (error) {
+      console.error('[RevitService] 获取类别失败:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 获取所有族
+   */
+  async getFamilies(): Promise<any[]> {
+    try {
+      return await this.client.getFamilies();
+    } catch (error) {
+      console.error('[RevitService] 获取族失败:', error);
+      throw error;
     }
   }
 }

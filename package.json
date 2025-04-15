@@ -11,15 +11,16 @@
     "build"
   ],
   "scripts": {
-    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
-    "prepare": "npm run build",
-    "watch": "tsc --watch",
-    "inspector": "npx @modelcontextprotocol/inspector build/index.js"
+    "start": "node build/index.js",
+    "dev": "ts-node src/index.ts",
+    "build": "tsc",
+    "watch": "tsc -w"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "0.6.0",
     "axios": "^1.8.4",
     "dotenv": "^16.4.7",
+    "express": "^5.1.0",
     "ws": "^8.18.1"
   },
   "devDependencies": {

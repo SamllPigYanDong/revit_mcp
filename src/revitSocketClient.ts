@@ -1,5 +1,5 @@
 import * as net from 'net';
-import { GetElementsArgs, RevitModelInfo, RevitElement } from './types.js';
+import { GetElementsArgs, RevitModelInfo, RevitElement ,GetElementInfoArgs} from './types.js';
 
 export class RevitSocketClient {
   private socket: net.Socket | null = null;
@@ -190,7 +190,15 @@ export class RevitSocketClient {
   }
 
   /**
-   * 根据条件查询 Revit 元素
+   * 获取所有类别
+   */
+  public async getCategories(): Promise<any[]> {
+    const response = await this.sendRequest<any[]>('get_categories', {});
+    return response;
+  }
+
+  /**
+   * 根据条件查询 Revit 元素（更新后的方法）
    */
   public async getElements(args: GetElementsArgs): Promise<RevitElement[]> {
     const response = await this.sendRequest<RevitElement[]>('get_elements', args);
@@ -211,5 +219,17 @@ export class RevitSocketClient {
   public async getViews(): Promise<any[]> {
     const response = await this.sendRequest<any[]>('get_views', {});
     return response;
+  }
+
+  /**
+   * 获取所有视图
+   */
+  public async getFamilies(): Promise<any[]> {
+    const response = await this.sendRequest<any[]>('get_families', {});
+    return response;
+  }
+
+  public async getElementInfo(args: GetElementInfoArgs): Promise<any> {
+    return await this.sendRequest('get_element_info', args);
   }
 }

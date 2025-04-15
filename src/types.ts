@@ -24,6 +24,12 @@ export interface GetElementsArgs {
   limit?: number;
 }
 
+export interface GetElementInfoArgs {
+  elementId: string;
+  getItemPropertyInfo?: boolean;
+  getItemParameterInfo?: boolean;
+}
+
 // 类型守卫，用于验证查询参数
 export function isValidElementsArgs(args: any): args is GetElementsArgs {
   return (

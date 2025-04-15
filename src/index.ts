@@ -30,6 +30,7 @@ class RevitMcpServer {
       }
     });
 
+
     this.revitService = new RevitService();
 
     this.setupHandlers();
@@ -54,7 +55,7 @@ class RevitMcpServer {
 
   private async cleanup(): Promise<void> {
     console.error("[RevitMcpServer] 正在关闭服务...");
-    await this.revitService.close();
+    //await this.revitService.close();
     await this.server.close();
     console.error("[RevitMcpServer] 服务已关闭");
   }
@@ -90,7 +91,7 @@ class RevitMcpServer {
 
         try {
           const modelInfo = await this.revitService.getModelInfo();
-
+          //const modelInfo = '';
           return {
             contents: [{
               uri: request.params.uri,
@@ -109,40 +110,54 @@ class RevitMcpServer {
   }
 
   private setupToolHandlers(): void {
-    // 保持原有的工具处理程序不变
     this.server.setRequestHandler(
       ListToolsRequestSchema,
       async () => ({
         tools: [{
+          name: "get_categories",
+          description: "获取 Revit 模型中的所有类别",
+          inputSchema: {
+            type: "object",
+            properties: {}
+          }
+        }, {
+          name: "get_families",
+          description: "获取 Revit 模型中的所有族",
+          inputSchema: {
+            type: "object",
+            properties: {
+              categoryId: {
+                type: "string",
+                description: "族类别 ID（可选）"
+              },
+              name: {
+                type: "string",
+                description: "族名称过滤（可选）"
+              }
+            }
+          }
+        }, {
           name: "get_elements",
           description: "获取 Revit 模型中的元素",
           inputSchema: {
             type: "object",
             properties: {
-              category: {
-                type: "string",
-                description: "元素类别（如墙、门、窗等）"
+              categoryIds: {
+                type: "array",
+                description: "需要获取的元素所属类别的Id集合"
               },
-              family: {
-                type: "string",
-                description: "族名称"
+              viewIds: {
+                type: "array",
+                description: "需要获取的元素所处的视图的Id集合"
               },
-              type: {
-                type: "string",
-                description: "类型名称"
-              },
-              level: {
-                type: "string",
-                description: "所在楼层"
-              },
-              limit: {
-                type: "number",
-                description: "返回结果的最大数量",
-                minimum: 1
+              levelIds: {
+                type: "array",
+                description: "需要获取的元素所处的标高的Id集合"
               }
             }
           }
-        }, {
+        },
+        {
           name: "get_levels",
           description: "获取 Revit 模型中的所有楼层",
           inputSchema: {
@@ -156,6 +171,29 @@ class RevitMcpServer {
             type: "object",
             properties: {}
           }
+        }, {
+          name: "get_element_info",
+          description: "获取 Revit 元素的详细信息",
+          inputSchema: {
+            type: "object",
+            properties: {
+              elementId: {
+                type: "string",
+                description: "元素的 ID"
+              },
+              getItemPropertyInfo: {
+                type: "boolean",
+                description: "是否获取元素属性信息",
+                default: true
+              },
+              getItemParameterInfo: {
+                type: "boolean",
+                description: "是否获取元素参数信息",
+                default: false
+              }
+            },
+            required: ["elementId"]
+          }
         }]
       })
     );
@@ -165,10 +203,10 @@ class RevitMcpServer {
       async (request) => {
         // 获取工具名称
         const toolName = request.params.name;
-        
+
         // 将工具名称转换为 camelCase 方法名
         const methodName = toolName.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
-        
+
         // 检查 RevitService 是否有对应的方法
         if (typeof (this.revitService as any)[methodName] !== 'function') {
           throw new McpError(
@@ -176,11 +214,11 @@ class RevitMcpServer {
             `未知工具: ${toolName}`
           );
         }
-        
+
         try {
           // 动态调用对应的方法
           const result = await (this.revitService as any)[methodName](request.params.arguments || {});
-          
+          //const result = '';
           return {
             content: [{
               type: "text",
@@ -203,8 +241,7 @@ class RevitMcpServer {
   async run(): Promise<void> {
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
-    
-    // 这是一个信息性消息，必须记录到 stderr，
+
     // 以避免干扰在 stdout 上发生的 MCP 通信
     console.error("Revit MCP 服务器正在通过 stdio 运行");
   }
