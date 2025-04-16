@@ -2,6 +2,10 @@
 
 A Model Context Protocol server for Revit integration, enabling seamless communication between Claude AI and Autodesk Revit.
 
+<a href="https://glama.ai/mcp/servers/@SamllPigYanDong/revit_mcp">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@SamllPigYanDong/revit_mcp/badge" alt="Revit Server MCP server" />
+</a>
+
 [English](./README.md) | [中文](./README.zh-CN.md)
 
 ## 🎯 Overview
@@ -94,7 +98,6 @@ Configuration format:
 
 ### 🐛 Debugging
 
-
 For debugging the MCP communication:
 
 1. Use the built-in MCP Inspector:
@@ -122,4 +125,3 @@ If you have any questions or suggestions, feel free to reach out:
 
 - 📧 Email: 353554036@qq.com
 - 💬 WeChat  Account: modian4500
-
